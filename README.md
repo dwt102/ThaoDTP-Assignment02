@@ -174,3 +174,5 @@ CPT Codes CSV ─────────┘
 | **Apache Beam** | Replay DLQ messages after fixing schema errors |
 
 The V2 batch pipeline remains unchanged — V3 adds a parallel streaming path feeding into the same Bronze/Silver/Gold BigQuery layers.
+
+<--help last updated: Mon May 11 05:33:10 +07 2026 -->
