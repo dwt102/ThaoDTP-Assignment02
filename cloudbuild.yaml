@@ -42,11 +42,15 @@ steps:
     args:
       - "-c"
       - |
-        pip install -r requirements.txt --quiet
+        set -e
+        pip install -r requirements.txt
         echo "============================================================"
         echo " STEP 2/4 — Unit Tests"
         echo "============================================================"
-        AIRFLOW_HOME=/tmp/airflow python -m pytest tests/ -v --tb=short
+        AIRFLOW_HOME=/tmp/airflow \
+        AIRFLOW__CORE__UNIT_TEST_MODE=True \
+        AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////tmp/airflow/airflow.db \
+        python -m pytest tests/ -v --tb=short
     waitFor: ["validate-dags"]
 
   # ── Step 4: Deploy DAGs + SQL + Ingestion scripts ──────────────────────────
@@ -76,7 +80,7 @@ artifacts:
       - "cloudbuild.yaml"
 
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: LEGACY
   machineType: "E2_MEDIUM"
 
 timeout: "1800s"
