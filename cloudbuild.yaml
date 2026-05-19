@@ -17,11 +17,10 @@
 #           → gold_tables  (6 Analytical tables via gold.sql)
 #
 # CI/CD Steps:
-#   1. install-deps    — pip install requirements
-#   2. validate-dags   — py_compile all 3 DAGs
-#   3. run-tests       — unittest (import + structure + dependency order)
-#   4. deploy-all      — DAGs + SQL files + Ingestion scripts → GCS
-#   5. trigger-dag     — trigger parent_dag
+#   1. validate-dags   — py_compile all 3 DAGs
+#   2. run-tests       — pip install (pinned) + unittest
+#   3. deploy-all      — DAGs + SQL files + Ingestion scripts → GCS
+#   4. trigger-dag     — trigger parent_dag
 ##############################################################################
 
 substitutions:
@@ -30,36 +29,24 @@ substitutions:
   _COMPOSER_LOCATION: "asia-southeast1"
 
 steps:
-  # ── Step 1: Install Python dependencies ────────────────────────────────────
-  - id: "install-deps"
-    name: "python:3.11-slim"
-    entrypoint: pip
-    args:
-      - install
-      - -r
-      - requirements.txt
-      - --quiet
-
-  # ── Step 2: Validate DAG syntax (all 3 DAGs) ───────────────────────────────
+  # ── Step 1: Validate DAG syntax (all 3 DAGs) ──────────────────────────────
   - id: "validate-dags"
     name: "python:3.11-slim"
     entrypoint: bash
     args: ["scripts/validate_dag.sh"]
-    waitFor: ["install-deps"]
 
-  # ── Step 3: Run unit tests ──────────────────────────────────────────────────
+  # ── Step 2: Run unit tests ─────────────────────────────────────────────────
   - id: "run-tests"
     name: "python:3.11-slim"
     entrypoint: bash
     args:
       - "-c"
       - |
-        pip install apache-airflow apache-airflow-providers-google \
-                    apache-airflow-providers-cncf-kubernetes --quiet
+        pip install -r requirements.txt --quiet
         echo "============================================================"
         echo " STEP 2/4 — Unit Tests"
         echo "============================================================"
-        python -m pytest tests/ -v --tb=short
+        AIRFLOW_HOME=/tmp/airflow python -m pytest tests/ -v --tb=short
     waitFor: ["validate-dags"]
 
   # ── Step 4: Deploy DAGs + SQL + Ingestion scripts ──────────────────────────

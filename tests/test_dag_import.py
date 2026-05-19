@@ -10,6 +10,11 @@ import sys
 import unittest
 
 DAG_DIR = os.path.join(os.path.dirname(__file__), "..", "dags")
+SQL_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "sql"))
+
+# Point bq_dag to local sql/ folder so it can import cleanly in CI (no GCS mount)
+os.environ.setdefault("SQL_DIR", SQL_DIR)
+
 sys.path.insert(0, DAG_DIR)
 
 
@@ -54,7 +59,10 @@ class TestParentDag(unittest.TestCase):
         self.assertEqual(self.mod.dag.dag_id, "parent_dag")
 
     def test_schedule(self):
-        self.assertEqual(self.mod.dag.schedule_interval, "0 5 * * *")
+        # Airflow 2.4+ uses timetable; schedule_interval still readable for cron strings
+        schedule = getattr(self.mod.dag, "schedule_interval", None) \
+                   or str(self.mod.dag.timetable)
+        self.assertIn("0 5 * * *", schedule)
 
     def test_no_catchup(self):
         self.assertFalse(self.mod.dag.catchup)
