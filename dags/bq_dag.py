@@ -1,3 +1,4 @@
+import os
 import pendulum
 from airflow import DAG
 from datetime import timedelta
@@ -9,9 +10,12 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 PROJECT_ID = "project-f1c63dcd-3c29-4fb0-95a"
 LOCATION   = "asia-southeast1"
 
-SQL_FILE_PATH_1 = "/home/airflow/gcs/data/BQ/bronze.sql"
-SQL_FILE_PATH_2 = "/home/airflow/gcs/data/BQ/silver.sql"
-SQL_FILE_PATH_3 = "/home/airflow/gcs/data/BQ/gold.sql"
+# In Composer: /home/airflow/gcs/data/BQ (GCS auto-mount)
+# In CI/CD tests: set SQL_DIR env var to local sql/ folder
+_SQL_BASE    = os.environ.get("SQL_DIR", "/home/airflow/gcs/data/BQ")
+SQL_FILE_PATH_1 = f"{_SQL_BASE}/bronze.sql"
+SQL_FILE_PATH_2 = f"{_SQL_BASE}/silver.sql"
+SQL_FILE_PATH_3 = f"{_SQL_BASE}/gold.sql"
 
 # Read SQL query from file
 def read_sql_file(file_path: str) -> str:

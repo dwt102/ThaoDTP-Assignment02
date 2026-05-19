@@ -101,11 +101,11 @@ SELECT DISTINCT
     SSN,
     PhoneNumber,
     Gender,
-    DOB,
+    CAST(DOB AS INT64) AS DOB,
     Address,
-    ModifiedDate AS SRC_ModifiedDate,
+    CAST(ModifiedDate AS INT64) AS SRC_ModifiedDate,
     datasource,
-    CASE 
+    CASE
         WHEN SRC_PatientID IS NULL OR DOB IS NULL OR FirstName IS NULL OR LOWER(FirstName) = 'null' THEN TRUE
         ELSE FALSE
     END AS is_quarantined
@@ -248,24 +248,24 @@ SELECT DISTINCT
     PatientID,
     ProviderID,
     DeptID,
-    VisitDate,
-    ServiceDate,
-    PaidDate,
+    CAST(VisitDate AS INT64) AS VisitDate,
+    CAST(ServiceDate AS INT64) AS ServiceDate,
+    CAST(PaidDate AS INT64) AS PaidDate,
     VisitType,
-    Amount,
+    CAST(Amount AS FLOAT64) AS Amount,
     AmountType,
-    PaidAmount,
+    CAST(PaidAmount AS FLOAT64) AS PaidAmount,
     ClaimID,
     PayorID,
-    ProcedureCode,
+    CAST(ProcedureCode AS INT64) AS ProcedureCode,
     ICDCode,
     LineOfBusiness,
     MedicaidID,
     MedicareID,
-    InsertDate AS SRC_InsertDate,
-    ModifiedDate AS SRC_ModifiedDate,
+    CAST(InsertDate AS INT64) AS SRC_InsertDate,
+    CAST(ModifiedDate AS INT64) AS SRC_ModifiedDate,
     datasource,
-    CASE 
+    CASE
         WHEN EncounterID IS NULL OR PatientID IS NULL OR TransactionID IS NULL OR VisitDate IS NULL THEN TRUE
         ELSE FALSE
     END AS is_quarantined
@@ -401,12 +401,12 @@ SELECT DISTINCT
     PatientID,
     ProviderID,
     DepartmentID,
-    EncounterDate,
+    CAST(EncounterDate AS INT64) AS EncounterDate,
     EncounterType,
-    ProcedureCode,
-    ModifiedDate AS SRC_ModifiedDate,
+    CAST(ProcedureCode AS INT64) AS ProcedureCode,
+    CAST(ModifiedDate AS INT64) AS SRC_ModifiedDate,
     datasource,
-    CASE 
+    CASE
         WHEN SRC_EncounterID IS NULL OR PatientID IS NULL OR EncounterDate IS NULL OR LOWER(EncounterType) = 'null' THEN TRUE
         ELSE FALSE
     END AS is_quarantined
