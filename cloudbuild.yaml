@@ -80,7 +80,7 @@ artifacts:
       - "cloudbuild.yaml"
 
 options:
-  logging: LEGACY
+  logging: CLOUD_LOGGING_ONLY
   machineType: "E2_MEDIUM"
 
 timeout: "1800s"
