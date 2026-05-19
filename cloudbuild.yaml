@@ -24,7 +24,7 @@
 ##############################################################################
 
 substitutions:
-  _COMPOSER_BUCKET:   "gs://asia-southeast1-healthcare--5e26beaf-bucket"
+  _COMPOSER_BUCKET:   "asia-southeast1-healthcare--5e26beaf-bucket"
   _COMPOSER_ENV:      "healthcare-composer"
   _COMPOSER_LOCATION: "asia-southeast1"
 
